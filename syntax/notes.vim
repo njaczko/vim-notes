@@ -30,11 +30,6 @@ syntax cluster notesInline contains=notesName
 " Default highlighting style for notes syntax markers.
 highlight def link notesHiddenMarker Ignore
 
-" Highlight note names as hyperlinks. {{{2
-call xolox#notes#highlight_names(1)
-syntax cluster notesInline add=notesName
-highlight def link notesName Underlined
-
 " Highlight @tags as hyperlinks. {{{2
 syntax match notesTagName /\(^\|\s\)\@<=@\k\+/
 highlight def link notesTagName Underlined
@@ -84,7 +79,7 @@ else
   syntax match notesBold /\*\k[^*]*\k\*/
 endif
 syntax cluster notesInline add=notesBold
-highlight notesBold gui=bold cterm=bold
+highlight notesBold gui=bold cterm=bold ctermfg=DarkRed
 
 " Highlight domain names, URLs, e-mail addresses and filenames. {{{2
 
