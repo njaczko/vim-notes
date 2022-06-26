@@ -412,6 +412,10 @@ function! xolox#notes#save() abort " {{{1
       echoerr "Invalid note title"
       return
     endif
+
+    " Format the bullets
+    call xolox#notes#fix_all_bullet_levels()
+
     " Trigger the BufWritePre automatic command event because it provides
     " a very unobtrusive way for users to extend the vim-notes plug-in.
     execute 'doautocmd BufWritePre' fnameescape(newpath)
@@ -439,6 +443,7 @@ function! xolox#notes#save() abort " {{{1
     " Update in-memory list of all notes.
     call xolox#notes#cache_del(oldpath)
     call xolox#notes#cache_add(newpath, title)
+
     " Trigger the BufWritePost automatic command event because it provides
     " a very unobtrusive way for users to extend the vim-notes plug-in.
     execute 'doautocmd BufWritePost' fnameescape(newpath)
@@ -1306,6 +1311,23 @@ function! xolox#notes#foldtext() " {{{3
     return line
   endif
 endfunction
+
+function! xolox#notes#fix_bullet_level(level, char) " {{{3
+    execute '%s/\(^ ' . repeat("   ", a:level) . '\)\(•\|◦\|▸\|▹\|▪\|▫\)/' repeat("   ", a:level) . a:char . "/ge"
+endfunction
+
+function! xolox#notes#fix_all_bullet_levels() " {{{3
+  " set a mark so we can return to this location when we're done fixing
+  mark x
+  silent call xolox#notes#fix_bullet_level(0, "•")
+  silent call xolox#notes#fix_bullet_level(1, "◦")
+  silent call xolox#notes#fix_bullet_level(2, "▸")
+  silent call xolox#notes#fix_bullet_level(3, "▹")
+  silent call xolox#notes#fix_bullet_level(4, "▪")
+  silent call xolox#notes#fix_bullet_level(5, "▫")
+  normal 'x
+endfunction
+
 
 " }}}1
 
