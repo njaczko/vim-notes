@@ -113,15 +113,26 @@ syntax match notesWindowsPath /\k\@<![A-Za-z]:\S\+\([\\/]\|[^ [:punct:]]\)/
 syntax cluster notesInline add=notesWindowsPath
 highlight def link notesWindowsPath Directory
 
-" Highlight TODO, DONE, FIXME and XXX markers. {{{2
+" New BLOCKED marker
+syntax match notesBlockedItem /^\(\s\+\).*\<BLOCKED\>.*\(\n\1\s.*\)*/ contains=@notesInline
+syntax match notesBlockedMarker /\<BLOCKED\>/ containedin=notesBlockedItem
+highlight def link notesBlockedItem Comment
+highlight def link notesBlockedMarker Directory
+
+" Updated XXX marker
+syntax match notesXXXItem /^\(\s\+\).*\<XXX\>.*\(\n\1\s.*\)*/ contains=@notesInline
+syntax match notesXXXMarker /\<XXX\>/ containedin=notesXXXItem
+highlight def link notesXXXItem Comment
+highlight def link notesXXXMarker WarningMsg
+
+
+" Highlight TODO, DONE, and FIXME markers. {{{2
 syntax match notesTodo /\<TODO\>/
-syntax match notesXXX /\<XXX\>/
 syntax match notesFixMe /\<FIXME\>/
 syntax match notesInProgress /\<\(CURRENT\|INPROGRESS\|STARTED\|WIP\)\>/
 syntax match notesDoneItem /^\(\s\+\).*\<DONE\>.*\(\n\1\s.*\)*/ contains=@notesInline
 syntax match notesDoneMarker /\<DONE\>/ containedin=notesDoneItem
 highlight def link notesTodo WarningMsg
-highlight def link notesXXX WarningMsg
 highlight def link notesFixMe WarningMsg
 highlight def link notesDoneItem Comment
 highlight def link notesDoneMarker Question
