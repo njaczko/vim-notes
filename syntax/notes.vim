@@ -30,10 +30,6 @@ syntax cluster notesInline contains=notesName
 " Default highlighting style for notes syntax markers.
 highlight def link notesHiddenMarker Ignore
 
-" Highlight @tags as hyperlinks. {{{2
-syntax match notesTagName /\(^\|\s\)\@<=@\k\+/
-highlight def link notesTagName Underlined
-
 " Highlight list bullets and numbers. {{{2
 execute 'syntax match notesListBullet /' . escape(xolox#notes#leading_bullet_pattern(), '/') . '/'
 highlight def link notesListBullet Comment
@@ -83,22 +79,6 @@ highlight notesBold gui=bold cterm=bold ctermfg=DarkRed
 
 " Highlight domain names, URLs, e-mail addresses and filenames. {{{2
 
-" FIXME This setting is lost once the user switches color scheme!
-highlight notesSubtleURL gui=underline guifg=fg
-
-syntax match notesTextURL @\<www\.\(\S*\w\)\+/\?@
-syntax cluster notesInline add=notesTextURL
-highlight def link notesTextURL notesSubtleURL
-execute printf('syntax match notesRealURL @%s@', g:xolox#notes#url_pattern)
-syntax cluster notesInline add=notesRealURL
-highlight def link notesRealURL notesSubtleURL
-if has('conceal') && xolox#misc#option#get('notes_conceal_url', 1)
-  syntax match notesUrlScheme @\(mailto:\|javascript:\|\w\{3,}://\)@ contained containedin=notesRealURL conceal
-  highlight def link notesUrlScheme notesRealURL
-endif
-syntax match notesEmailAddr /\<\w[^@ \t\r]*\w@\w[^@ \t\r]\+\w\>/
-syntax cluster notesInline add=notesEmailAddr
-highlight def link notesEmailAddr notesSubtleURL
 syntax match notesUnixPath /\k\@<![\/~]\S\+\(\/\|[^ [:punct:]]\)/
 syntax cluster notesInline add=notesUnixPath
 highlight def link notesUnixPath Directory
@@ -175,10 +155,6 @@ call xolox#notes#highlight_sources(1)
 " Hide mode line at end of file. {{{2
 syntax match notesModeLine /\_^vim:.*\_s*\%$/
 highlight def link notesModeLine LineNr
-
-" Last edited dates in :ShowTaggedNotes buffers.
-syntax match notesLastEdited /(last edited \(today\|yesterday\|\w\+, \w\+ \d\+, \d\+\))/
-highlight def link notesLastEdited LineNr
 
 " }}}1
 
