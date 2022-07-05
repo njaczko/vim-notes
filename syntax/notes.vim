@@ -77,17 +77,6 @@ endif
 syntax cluster notesInline add=notesBold
 highlight notesBold gui=bold cterm=bold ctermfg=DarkRed
 
-" Highlight domain names, URLs, e-mail addresses and filenames. {{{2
-
-syntax match notesUnixPath /\k\@<![\/~]\S\+\(\/\|[^ [:punct:]]\)/
-syntax cluster notesInline add=notesUnixPath
-highlight def link notesUnixPath Directory
-syntax match notesPathLnum /:\d\+/ contained containedin=notesUnixPath
-highlight def link notesPathLnum Comment
-syntax match notesWindowsPath /\k\@<![A-Za-z]:\S\+\([\\/]\|[^ [:punct:]]\)/
-syntax cluster notesInline add=notesWindowsPath
-highlight def link notesWindowsPath Directory
-
 " New BLOCKED marker
 syntax match notesBlockedItem /^\(\s\+\).*\<BLOCKED\>.*\(\n\1\s.*\)*/ contains=@notesInline
 syntax match notesBlockedMarker /\<BLOCKED\>/ containedin=notesBlockedItem
@@ -151,10 +140,6 @@ syntax match notesCodeEnd /}}[}]/
 highlight def link notesCodeStart Ignore
 highlight def link notesCodeEnd Ignore
 call xolox#notes#highlight_sources(1)
-
-" Hide mode line at end of file. {{{2
-syntax match notesModeLine /\_^vim:.*\_s*\%$/
-highlight def link notesModeLine LineNr
 
 " }}}1
 
