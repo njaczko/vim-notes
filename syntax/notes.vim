@@ -48,32 +48,23 @@ highlight def link notesSingleQuoted Special
 highlight def link notesDoubleQuoted String
 
 " Highlight inline code fragments (same as Markdown syntax). {{{2
-if has('conceal') && xolox#misc#option#get('notes_conceal_code', 1)
-  syntax region notesInlineCode matchgroup=notesInlineCodeMarker start=/`/ end=/`/ concealends
-  highlight link notesItalicMarker notesInlineCodeMarker
-else
-  syntax match notesInlineCode /`[^`]*`/
-endif
+syntax region notesInlineCode matchgroup=notesInlineCodeMarker start=/`/ end=/`/ concealends
+highlight link notesItalicMarker notesInlineCodeMarker
+
 syntax cluster notesInline add=notesInlineCode
 highlight def link notesInlineCode Special
 
 " Highlight text emphasized in italic font. {{{2
-if has('conceal') && xolox#misc#option#get('notes_conceal_italic', 1)
-  syntax region notesItalic matchgroup=notesItalicMarker start=/\<_\k\@=/ end=/_\>\|\n/ contains=@Spell concealends
-  highlight link notesItalicMarker notesHiddenMarker
-else
-  syntax match notesItalic /\<_\k[^_]*\k_\>/
-endif
+syntax region notesItalic matchgroup=notesItalicMarker start=/\<_\k\@=/ end=/_\>\|\n/ contains=@Spell concealends
+highlight link notesItalicMarker notesHiddenMarker
+
 syntax cluster notesInline add=notesItalic
 highlight notesItalic gui=italic cterm=italic
 
 " Highlight text emphasized in bold font. {{{2
-if has('conceal') && xolox#misc#option#get('notes_conceal_bold', 1)
-  syntax region notesBold matchgroup=notesBoldMarker start=/\*\k\@=/ end=/\S\@<=\*/ contains=@Spell concealends
-  highlight link notesBoldMarker notesHiddenMarker
-else
-  syntax match notesBold /\*\k[^*]*\k\*/
-endif
+syntax region notesBold matchgroup=notesBoldMarker start=/\*\k\@=/ end=/\S\@<=\*/ contains=@Spell concealends
+highlight link notesBoldMarker notesHiddenMarker
+
 syntax cluster notesInline add=notesBold
 highlight notesBold gui=bold cterm=bold ctermfg=DarkRed
 
