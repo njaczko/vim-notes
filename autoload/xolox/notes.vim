@@ -10,83 +10,15 @@ let g:xolox#notes#version = '0.33.4'
 let g:xolox#notes#url_pattern = '\<\(mailto:\|javascript:\|\w\{3,}://\)\(\S*\w\)\+/\?'
 let s:scriptdir = expand('<sfile>:p:h')
 
+" TODO this seems to be MVP at this point
 function! xolox#notes#init() " {{{1
-  " Initialize the configuration of the notes plug-in. This is a bit tricky:
-  " We want to be compatible with Pathogen which installs plug-ins as
-  " "bundles" under ~/.vim/bundle/*/ so we use a relative path to make sure we
-  " 'stay inside the bundle'. However if the notes.vim plug-in is installed
-  " system wide the user probably won't have permission to write inside the
-  " installation directory, so we have to switch to $HOME then.
-  let systemdir = xolox#misc#path#absolute(s:scriptdir . '/../../misc/notes')
-  if filewritable(systemdir) == 2
-    let localdir = systemdir
-  elseif xolox#misc#os#is_win()
-    let localdir = xolox#misc#path#absolute('~/vimfiles/misc/notes')
-  else
-    let localdir = xolox#misc#path#absolute('~/.vim/misc/notes')
-  endif
-  " Define the default location of the shadow directory with predefined notes?
-  if !exists('g:notes_shadowdir')
-    let g:notes_shadowdir = xolox#misc#path#merge(systemdir, 'shadow')
-  endif
-  " Define the default location for the full text index.
-  if !exists('g:notes_indexfile')
-    let g:notes_indexfile = xolox#misc#path#merge(localdir, 'index.pickle')
-  endif
-  " Define the default location for the keyword scanner script.
-  if !exists('g:notes_indexscript')
-    let g:notes_indexscript = xolox#misc#path#merge(systemdir, 'search-notes.py')
-  endif
-  " Define the default suffix for note filenames.
-  if !exists('g:notes_suffix')
-    let g:notes_suffix = ''
-  endif
-  " Define the default location for the tag name index (used for completion).
-  if !exists('g:notes_tagsindex')
-    let g:notes_tagsindex = xolox#misc#path#merge(localdir, 'tags.txt')
-  endif
-  " Define the default location for the file containing the most recent note's
-  " filename.
-  if !exists('g:notes_recentindex')
-    let g:notes_recentindex = xolox#misc#path#merge(localdir, 'recent.txt')
-  endif
-  " Define the default location of the template for new notes.
-  if !exists('g:notes_new_note_template')
-    if !empty($VIM_NOTES_TEMPLATE)
-      " Command line override.
-      let g:notes_new_note_template = xolox#misc#path#absolute($VIM_NOTES_TEMPLATE)
-    else
-      let g:notes_new_note_template = xolox#misc#path#merge(g:notes_shadowdir, 'New note')
-    endif
-  endif
-  " Define the default location of the template for HTML conversion.
-  if !exists('g:notes_html_template')
-    let g:notes_html_template = xolox#misc#path#merge(localdir, 'template.html')
-  endif
-  " Define the default action when a note's filename and title are out of sync.
-  if !exists('g:notes_title_sync')
-    " Valid values are "no", "change_title", "rename_file" and "prompt".
-    let g:notes_title_sync = 'prompt'
-  endif
   " Unicode is enabled by default if Vim's encoding is set to UTF-8.
   if !exists('g:notes_unicode_enabled')
     let g:notes_unicode_enabled = (&encoding == 'utf-8')
   endif
-  " Smart quotes and such are enabled by default.
-  if !exists('g:notes_smart_quotes')
-    let g:notes_smart_quotes = 1
-  endif
   " Tab/Shift-Tab is used to indent/dedent list items by default.
   if !exists('g:notes_tab_indents')
     let g:notes_tab_indents = 1
-  endif
-  " Alt-Left/Alt-Right is used to indent/dedent list items by default.
-  if !exists('g:notes_alt_indents')
-    let g:notes_alt_indents = 1
-  endif
-  " Text used for horizontal rulers.
-  if !exists('g:notes_ruler_text')
-    let g:notes_ruler_text = repeat(' ', ((&tw > 0 ? &tw : 79) - 5) / 2) . '* * *'
   endif
   " Symbols used to denote list items with increasing nesting levels.
   let g:notes_unicode_bullets = ['•', '◦', '▸', '▹', '▪', '▫']
@@ -97,10 +29,6 @@ function! xolox#notes#init() " {{{1
     else
       let g:notes_list_bullets = g:notes_ascii_bullets
     endif
-  endif
-  " Should note titles only match (be highlighted) on word boundaries?
-  if !exists('g:notes_word_boundaries')
-    let g:notes_word_boundaries = 0
   endif
 endfunction
 
@@ -231,17 +159,17 @@ endfunction
 
 function! xolox#notes#insert_left_arrow() " {{{3
   " Change ASCII left arrow (<-) to Unicode arrow (←) as it is typed.
-  return (g:notes_smart_quotes && xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '←' : "<-"
+  return (xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '←' : "<-"
 endfunction
 
 function! xolox#notes#insert_right_arrow() " {{{3
   " Change ASCII right arrow (->) to Unicode arrow (→) as it is typed.
-  return (g:notes_smart_quotes && xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '→' : '->'
+  return (xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '→' : '->'
 endfunction
 
 function! xolox#notes#insert_bidi_arrow() " {{{3
   " Change bidirectional ASCII arrow (->) to Unicode arrow (→) as it is typed.
-  return (g:notes_smart_quotes && xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '↔' : "<->"
+  return (xolox#notes#unicode_enabled() && !xolox#notes#currently_inside_snippet()) ? '↔' : "<->"
 endfunction
 
 function! xolox#notes#insert_bullet(chr) " {{{3
