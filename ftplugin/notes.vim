@@ -77,6 +77,14 @@ let b:undo_ftplugin .= ' | execute "iunmap <buffer> ->"'
 let b:undo_ftplugin .= ' | execute "iunmap <buffer> <-"'
 let b:undo_ftplugin .= ' | execute "iunmap <buffer> <->"'
 
+" Convert ASCII bullets to Unicode bullets
+inoremap <buffer> <expr> * xolox#notes#insert_bullet('*')
+inoremap <buffer> <expr> - xolox#notes#insert_bullet('-')
+inoremap <buffer> <expr> + xolox#notes#insert_bullet('+')
+let b:undo_ftplugin .= ' | execute "iunmap <buffer> *"'
+let b:undo_ftplugin .= ' | execute "iunmap <buffer> -"'
+let b:undo_ftplugin .= ' | execute "iunmap <buffer> +"'
+
 " Indent list items using <Tab> and <Shift-Tab>? {{{1
 if g:notes_tab_indents
   inoremap <buffer> <silent> <Tab> <C-o>:call xolox#notes#indent_list(1, line('.'), line('.'))<CR>
