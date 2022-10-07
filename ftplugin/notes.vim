@@ -77,10 +77,6 @@ let b:undo_ftplugin .= ' | execute "iunmap <buffer> ->"'
 let b:undo_ftplugin .= ' | execute "iunmap <buffer> <-"'
 let b:undo_ftplugin .= ' | execute "iunmap <buffer> <->"'
 
-" Format three asterisks as a horizontal ruler. {{{1
-inoremap <buffer> *** <C-o>:call xolox#notes#insert_ruler()<CR>
-let b:undo_ftplugin .= ' | execute "iunmap <buffer> ***"'
-
 " Indent list items using <Tab> and <Shift-Tab>? {{{1
 if g:notes_tab_indents
   inoremap <buffer> <silent> <Tab> <C-o>:call xolox#notes#indent_list(1, line('.'), line('.'))<CR>

@@ -10,7 +10,7 @@ let g:xolox#notes#version = '0.33.4'
 let g:xolox#notes#url_pattern = '\<\(mailto:\|javascript:\|\w\{3,}://\)\(\S*\w\)\+/\?'
 let s:scriptdir = expand('<sfile>:p:h')
 
-" TODO this seems to be MVP at this point
+" TODO remove all the conditionals.
 function! xolox#notes#init() " {{{1
   " Unicode is enabled by default if Vim's encoding is set to UTF-8.
   if !exists('g:notes_unicode_enabled')
@@ -33,7 +33,7 @@ function! xolox#notes#init() " {{{1
 endfunction
 
 
-" TODO KEEP THIS
+" TODO remove this - assume unicode is enabled everywhere this is called
 function! xolox#notes#unicode_enabled() " {{{1
   " Check if the `g:notes_unicode_enabled` option is set to true (1) and Vim's
   " encoding is set to UTF-8.
@@ -140,21 +140,6 @@ endfunction
 
 " Functions called by the file type plug-in and syntax script. {{{2
 
-" TODO don't really need the asterisk magic where this is called... can
-" probably clean up
-function! xolox#notes#insert_ruler() " {{{3
-  " Insert horizontal ruler delimited by empty lines.
-  let lnum = line('.')
-  if getline(lnum) =~ '\S' && getline(lnum + 1) !~ '\S'
-    let lnum += 1
-  endif
-  let line1 = prevnonblank(lnum)
-  let line2 = nextnonblank(lnum)
-  if line1 < lnum && line2 > lnum
-    execute printf('%i,%idelete', line1 + 1, line2 - 1)
-  endif
-  call append(line1, ['', g:notes_ruler_text, ''])
-endfunction
 
 
 function! xolox#notes#insert_left_arrow() " {{{3
