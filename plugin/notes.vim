@@ -8,6 +8,8 @@ endif
 " Initialize the configuration defaults.
 call xolox#notes#init()
 
+au BufWritePre * call xolox#notes#save()
+
 " Make sure the plug-in is only loaded once.
 let g:loaded_notes = 1
 

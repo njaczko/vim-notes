@@ -1,13 +1,4 @@
-﻿" Vim auto-load script
-" Author: Peter Odding <peter@peterodding.com>
-" Last Change: November 4, 2015
-" URL: http://peterodding.com/code/vim/notes/
-
-" Note: This file is encoded in UTF-8 including a byte order mark so
-" that Vim loads the script using the right encoding transparently.
-
-let g:xolox#notes#version = '0.33.4'
-let g:xolox#notes#url_pattern = '\<\(mailto:\|javascript:\|\w\{3,}://\)\(\S*\w\)\+/\?'
+﻿let g:xolox#notes#version = '0.33.4'
 let s:scriptdir = expand('<sfile>:p:h')
 
 " TODO remove all the conditionals.
@@ -43,52 +34,9 @@ endfunction
 
 " TODO definitely some stuff here we want to keep
 function! xolox#notes#save() abort " {{{1
-  " TODO remove this renaming stuff
-  " When the current note's title is changed, automatically rename the file.
-  if xolox#notes#filetype_is_note(&ft)
-    let title = xolox#notes#current_title()
-    let oldpath = expand('%:p')
-    let newpath = xolox#notes#title_to_fname(title)
-    if newpath == ''
-      echoerr "Invalid note title"
-      return
-    endif
+  if (&ft!='notes') | return | endif
 
-    " Format the bullets
-    call xolox#notes#fix_all_bullet_levels()
-
-    " Trigger the BufWritePre automatic command event because it provides
-    " a very unobtrusive way for users to extend the vim-notes plug-in.
-    execute 'doautocmd BufWritePre' fnameescape(newpath)
-    " Actually save the user's buffer to the file.
-    let bang = v:cmdbang ? '!' : ''
-    execute 'saveas' . bang fnameescape(newpath)
-    " XXX If {oldpath} and {newpath} end up pointing to the same file on disk
-    " yet xolox#misc#path#equals() doesn't catch this, we might end up
-    " deleting the user's one and only note! One way to circumvent this
-    " potential problem is to first delete the old note and then save the new
-    " note. The problem with this approach is that :saveas might fail in which
-    " case we've already deleted the old note...
-    if !xolox#misc#path#equals(oldpath, newpath)
-      if !filereadable(newpath)
-        let message = "The notes plug-in tried to rename your note but failed to create %s so won't delete %s or you could lose your note! This should never happen... If you don't mind me borrowing some of your time, please contact me at peter@peterodding.com and include the old and new filename so that I can try to reproduce the issue. Thanks!"
-        call confirm(printf(message, string(newpath), string(oldpath)))
-        return
-      endif
-      call delete(oldpath)
-    endif
-    " Update the tags index on disk and in-memory.
-    call xolox#notes#tags#forget_note(xolox#notes#fname_to_title(oldpath))
-    call xolox#notes#tags#scan_note(title, join(getline(1, '$'), "\n"))
-    call xolox#notes#tags#save_index()
-    " Update in-memory list of all notes.
-    call xolox#notes#cache_del(oldpath)
-    call xolox#notes#cache_add(newpath, title)
-
-    " Trigger the BufWritePost automatic command event because it provides
-    " a very unobtrusive way for users to extend the vim-notes plug-in.
-    execute 'doautocmd BufWritePost' fnameescape(newpath)
-  endif
+  call xolox#notes#fix_all_bullet_levels()
 endfunction
 
 " Miscellaneous functions. {{{1
@@ -341,12 +289,10 @@ function! xolox#notes#foldtext() " {{{3
   endif
 endfunction
 
-" TODO KEEP THIS
 function! xolox#notes#fix_bullet_level(level, char) " {{{3
     execute '%s/\(^ ' . repeat("   ", a:level) . '\)\(•\|◦\|▸\|▹\|▪\|▫\)/' repeat("   ", a:level) . a:char . "/ge"
 endfunction
 
-" TODO KEEP THIS
 function! xolox#notes#fix_all_bullet_levels() " {{{3
   " set a mark so we can return to this location when we're done fixing
   mark x
