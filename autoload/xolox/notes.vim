@@ -101,12 +101,6 @@ function! xolox#notes#autocmd_pattern(directory, use_extension) " {{{2
   " matches filename patterns in automatic commands after resolving
   " filenames).
   let directory = xolox#misc#path#absolute(a:directory)
-  " On Windows we have to replace backslashes with forward slashes, otherwise
-  " the automatic command will never trigger! This has to happen before we
-  " make the fnameescape() call.
-  if xolox#misc#os#is_win()
-    let directory = substitute(directory, '\\', '/', 'g')
-  endif
   " Escape the directory but not the trailing "*".
   let pattern = fnameescape(directory) . '/*'
   if a:use_extension && !empty(g:notes_suffix)
@@ -131,11 +125,6 @@ function! xolox#notes#current_title() " {{{2
     call setline(1, trimmed)
   endif
   return trimmed
-endfunction
-
-function! xolox#notes#exists(title) " {{{3
-  " Return true if the note {title} exists.
-  return index(xolox#notes#get_titles(0), a:title, 0, xolox#misc#os#is_win()) >= 0
 endfunction
 
 " Functions called by the file type plug-in and syntax script. {{{2
@@ -260,7 +249,6 @@ endfunction
 
 function! xolox#notes#highlight_sources(force) " {{{3
   " Syntax highlight source code embedded in notes.
-  let starttime = xolox#misc#timer#start()
   " Look for code blocks in the current note.
   let filetypes = {}
   for line in getline(1, '$')
@@ -286,9 +274,6 @@ function! xolox#notes#highlight_sources(force) " {{{3
         execute printf(command, group, startgroup, startmarker, ft, endgroup, endmarker, include, conceal ? ' concealends' : '')
       endfor
     endfor
-    if &vbs >= 1
-      call xolox#misc#timer#stop("notes.vim %s: Highlighted embedded %s sources in %s.", g:xolox#notes#version, join(sort(keys(filetypes)), '/'), starttime)
-    endif
   endif
 endfunction
 
