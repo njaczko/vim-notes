@@ -39,45 +39,6 @@ function! xolox#notes#save() abort " {{{1
   call xolox#notes#fix_all_bullet_levels()
 endfunction
 
-" Miscellaneous functions. {{{1
-
-" TODO we may need to keep this. inline the #misc stuff
-function! xolox#notes#autocmd_pattern(directory, use_extension) " {{{2
-  " Generate a normalized automatic command pattern. First we resolve the path
-  " to the directory with notes (eliminating any symbolic links) so that the
-  " automatic command also applies to symbolic links pointing to notes (Vim
-  " matches filename patterns in automatic commands after resolving
-  " filenames).
-  let directory = xolox#misc#path#absolute(a:directory)
-  " Escape the directory but not the trailing "*".
-  let pattern = fnameescape(directory) . '/*'
-  if a:use_extension && !empty(g:notes_suffix)
-    let pattern .= g:notes_suffix
-  endif
-  " On Windows the pattern won't match if it contains repeating slashes.
-  return substitute(pattern, '/\+', '/', 'g')
-endfunction
-
-" TODO keep this?
-function! xolox#notes#filetype_is_note(ft) " {{{2
-  " Check whether the given file type value refers to the notes.vim plug-in.
-  return index(split(a:ft, '\.'), 'notes') >= 0
-endfunction
-
-" TODO can probably get rid of this after we refactor the `save` stuff
-function! xolox#notes#current_title() " {{{2
-  " Get the title of the current note.
-  let title = getline(1)
-  let trimmed = xolox#misc#str#trim(title)
-  if title != trimmed
-    call setline(1, trimmed)
-  endif
-  return trimmed
-endfunction
-
-" Functions called by the file type plug-in and syntax script. {{{2
-
-
 
 function! xolox#notes#insert_left_arrow() " {{{3
   " Change ASCII left arrow (<-) to Unicode arrow (←) as it is typed.
