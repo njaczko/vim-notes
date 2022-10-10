@@ -90,7 +90,7 @@ function! xolox#notes#indent_list(direction, line1, line2) " {{{3
       endif
       " Replace the bullet.
       let bullet = g:notes_list_bullets[level % len(g:notes_list_bullets)]
-      call setline(lnum, substitute(line, leading_bullet, xolox#misc#escape#substitute(bullet), ''))
+      call setline(lnum, substitute(line, leading_bullet, xolox#notes#substitute(bullet), ''))
     endfor
     " Regex to match a trailing bullet.
     if getline('.') =~ xolox#notes#trailing_bullet_pattern()
@@ -104,14 +104,14 @@ endfunction
 function! xolox#notes#leading_bullet_pattern()
   " Return a regular expression pattern that matches any leading list bullet.
   let escaped_bullets = copy(g:notes_list_bullets)
-  call map(escaped_bullets, 'xolox#misc#escape#pattern(v:val)')
+  call map(escaped_bullets, 'xolox#notes#pattern(v:val)')
   return '\(\_^\s*\)\@<=\(' . join(escaped_bullets, '\|') . '\)'
 endfunction
 
 function! xolox#notes#trailing_bullet_pattern()
   " Return a regular expression pattern that matches any trailing list bullet.
   let escaped_bullets = copy(g:notes_list_bullets)
-  call map(escaped_bullets, 'xolox#misc#escape#pattern(v:val)')
+  call map(escaped_bullets, 'xolox#notes#pattern(v:val)')
   return '\(' . join(escaped_bullets, '\|') . '\|\*\)$'
 endfunction
 
@@ -148,7 +148,7 @@ endfunction
 
 function! s:words_to_pattern(words)
   " Quote regex meta characters, enable matching of hard wrapped words.
-  return substitute(xolox#misc#escape#pattern(a:words), '\s\+', '\\_s\\+', 'g')
+  return substitute(xolox#notes#pattern(a:words), '\s\+', '\\_s\\+', 'g')
 endfunction
 
 function! s:sort_longest_to_shortest(a, b)
@@ -178,7 +178,7 @@ function! xolox#notes#highlight_sources(force) " {{{3
       let group = 'notesSnippet' . toupper(ft)
       let include = s:syntax_include(ft)
       for [startmarker, endmarker] in [['{{{', '}}}'], ['```', '```']]
-        let conceal = has('conceal') && xolox#misc#option#get('notes_conceal_code', 1)
+        let conceal = has('conceal')
         let command = 'syntax region %s matchgroup=%s start="%s%s \?" matchgroup=%s end="%s" keepend contains=%s%s'
         execute printf(command, group, startgroup, startmarker, ft, endgroup, endmarker, include, conceal ? ' concealends' : '')
       endfor
@@ -266,8 +266,31 @@ function! xolox#notes#fix_all_bullet_levels() " {{{3
   normal 'x
 endfunction
 
+function! xolox#notes#pattern(string) " {{{1
+  " Takes a single string argument and converts it into a [:substitute]
+  " [subcmd] / [substitute()] [subfun] pattern string that matches the given
+  " string literally.
+  "
+  " [subfun]: http://vimdoc.sourceforge.net/htmldoc/eval.html#substitute()
+  " [subcmd]: http://vimdoc.sourceforge.net/htmldoc/change.html#:substitute
+  if type(a:string) == type('')
+    let string = escape(a:string, '^$.*\~[]')
+    return substitute(string, '\n', '\\n', 'g')
+  endif
+  return ''
+endfunction
 
-" }}}1
+function! xolox#notes#substitute(string) " {{{1
+  " Takes a single string argument and converts it into a [:substitute]
+  " [subcmd] / [substitute()] [subfun] replacement string that inserts the
+  " given string literally.
+  if type(a:string) == type('')
+    let string = escape(a:string, '\&~%')
+    return substitute(string, '\n', '\\r', 'g')
+  endif
+  return ''
+endfunction
+
 
 " Make sure the plug-in configuration has been properly initialized before
 " any of the auto-load functions in this Vim script can be called.
