@@ -63,12 +63,6 @@ set completeopt+=longest
 inoremap <buffer> <expr> -- xolox#notes#insert_em_dash()
 let b:undo_ftplugin .= ' | execute "iunmap <buffer> --"'
 
-" Change plain quotes to curly quotes as they're typed. {{{1
-inoremap <buffer> <expr> ' xolox#notes#insert_quote("'")
-inoremap <buffer> <expr> " xolox#notes#insert_quote('"')
-let b:undo_ftplugin .= ' | execute "iunmap <buffer> ''"'
-let b:undo_ftplugin .= ' | execute ''iunmap <buffer> "'''
-
 " Change ASCII style arrows to Unicode arrows. {{{1
 inoremap <buffer> <expr> <- xolox#notes#insert_left_arrow()
 inoremap <buffer> <expr> -> xolox#notes#insert_right_arrow()
