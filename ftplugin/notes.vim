@@ -39,10 +39,6 @@ if has('conceal')
   let b:undo_ftplugin .= ' | set conceallevel<'
 endif
 
-" Change <cfile> to jump to notes by name. {{{1
-setlocal includeexpr=xolox#notes#include_expr(v:fname)
-let b:undo_ftplugin .= ' | set includeexpr<'
-
 " Enable completion of note titles using C-x C-u. {{{1
 setlocal completefunc=xolox#notes#user_complete
 let b:undo_ftplugin .= ' | set completefunc<'
