@@ -1,3 +1,5 @@
+**No longer maintained.**
+
 # njaczko/vim-notes
 
 This is a slimmed-down fork of Peter Odding's [vim-notes](https://github.com/xolox/vim-notes) plugin.
